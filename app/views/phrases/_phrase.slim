@@ -1,0 +1,8 @@
+.inner
+  = phrase.ru.capitalize
+= form_with model: phrase, url: check_phrase_path, local: false do |f|
+  = f.hidden_field :id, value: phrase.id
+  .inner
+    = f.text_field :en_input, autofocus: true
+  .inner
+    = f.submit

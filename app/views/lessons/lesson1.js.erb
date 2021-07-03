@@ -1,0 +1,7 @@
+$('.phrase').empty();
+$('.phrase').append('<%= j render 'phrases/phrase', phrase: @phrase %>');
+$('.message').empty();
+$('.message').append('<p>Excellent!</p>');
+$.confetti.restart();
+setTimeout($.confetti.stop, 1000);
+$("#phrase_en_input").focus();

@@ -1,3 +1,4 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  get 'lesson1', to: 'lessons#lesson1'
+  patch 'check_phrase', to: 'phrases#check_phrase'
 end
