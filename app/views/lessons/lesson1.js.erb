@@ -5,3 +5,5 @@ $('.message').append('<p>Excellent!</p>');
 $.confetti.restart();
 setTimeout($.confetti.stop, 1000);
 $("#phrase_en_input").focus();
+$('#myBar').text('<%= 300 - @count %>')
+$('#myBar').width((300 - parseInt($('#myBar').text(), 10)) / 3 + '%');

@@ -1,7 +1,12 @@
+body {
+  background-color: black;
+  color: white;
+}
+
 .center {
   width: 90%;
   position: absolute;
-  top: 150px;
+  top: 170px;
   left: 50%;
   -ms-transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translate(-50%,-50%);
@@ -11,7 +16,7 @@
 
 .message {
   position: absolute;
-  top: 50px;
+  top: 70px;
   left: 50%;
   -ms-transform: translateX(-50%) translateY(-50%);
   -webkit-transform: translate(-50%,-50%);
@@ -22,4 +27,20 @@
 .inner {
   width: max-content;
   margin: 0 auto;
+}
+
+.myProgress {
+  position: absolute;
+  left: 10%;
+  width: 80%;
+  background-color: grey;
+}
+
+#myBar {
+  width: 0%;
+  height: 30px;
+  background-color: #04AA6D;
+  text-align: center;
+  line-height: 30px;
+  color: white;
 }

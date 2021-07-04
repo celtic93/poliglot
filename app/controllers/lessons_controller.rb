@@ -1,6 +1,7 @@
 class LessonsController < ApplicationController
   def lesson1
     @phrase = create_phrase1
+    @count = Phrase.where(created_at: Time.current.all_day).where.not(en_input: nil).count
 
     respond_to do |format|
       format.html
@@ -62,7 +63,7 @@ class LessonsController < ApplicationController
         ru = "#{pronoun.ru} не #{verb[verb_form]}"
       when :future
         verb_form = "ru_#{time}_#{pronoun.en.downcase}"
-        en = "#{pronoun.en} will not #{verb.en}"
+        en = "#{pronoun.en} won't #{verb.en}"
         ru = "#{pronoun.ru} не #{verb[verb_form]}"
       end
     end

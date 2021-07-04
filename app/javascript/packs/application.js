@@ -12,3 +12,4 @@ ActiveStorage.start()
 
 require('jquery')
 require('packs/confetti')
+require('packs/main')
