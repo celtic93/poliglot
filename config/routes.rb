@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
-  get 'lesson1', to: 'lessons#lesson1'
+  resources :lessons, only: :show
   patch 'check_phrase', to: 'phrases#check_phrase'
 end

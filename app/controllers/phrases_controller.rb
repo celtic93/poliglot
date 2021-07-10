@@ -3,7 +3,7 @@ class PhrasesController < ApplicationController
     @phrase = Phrase.find(params[:phrase][:id])
 
     if @phrase.update(phrase_params)
-      redirect_to :lesson1
+      redirect_to @phrase.lesson
     else
       render 'lessons/error', phrase: @phrase
     end

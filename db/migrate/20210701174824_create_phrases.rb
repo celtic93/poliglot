@@ -4,6 +4,7 @@ class CreatePhrases < ActiveRecord::Migration[6.1]
       t.string :en
       t.string :ru
       t.string :en_input
+      t.references :lesson
 
       t.timestamps
     end

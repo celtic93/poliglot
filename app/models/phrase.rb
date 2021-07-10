@@ -3,4 +3,6 @@ class Phrase < ApplicationRecord
   validates :en_input, inclusion: { in: ->(phrase) { [phrase.en, phrase.en.downcase, phrase.en.capitalize] },
                                     message: 'You can do better!' },
                        allow_nil: true
+
+  belongs_to :lesson
 end
