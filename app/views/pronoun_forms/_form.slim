@@ -2,13 +2,13 @@
   -if @pronoun_form.errors.any?
     = render 'shared/errors', errors: @pronoun_form.errors
 
-  = f.label :en
-  = f.text_field :en
+  p= f.label :en
+  p= f.text_field :en
 
-  = f.label :ru
-  = f.text_field :ru
+  p= f.label :ru
+  p= f.text_field :ru
 
-  = f.label :pronoun
-  = f.collection_select :pronoun_id, Pronoun.where(kind: 'subject'), :id, :ru
+  p= f.label :pronoun
+  p= f.collection_select :pronoun_id, Pronoun.where(kind: 'subject'), :id, :ru
 
-  = f.submit
+  p= f.submit

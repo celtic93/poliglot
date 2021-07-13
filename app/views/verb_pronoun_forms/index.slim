@@ -1,0 +1,5 @@
+p= link_to 'New', new_verb_pronoun_form_path
+
+- @verb_pronoun_forms.each do |verb_pronoun_form|
+  p= "#{verb_pronoun_form.verb.en} - #{verb_pronoun_form.verb.ru} #{verb_pronoun_form.pronoun_form.ru}"
+  = link_to 'Delete', verb_pronoun_form_path(verb_pronoun_form), method: :delete

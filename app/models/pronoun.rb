@@ -1,4 +1,6 @@
 class Pronoun < ApplicationRecord
+  has_many :pronoun_forms
+  
   validates :en, :ru, presence: true
   validates :en, uniqueness: true
 

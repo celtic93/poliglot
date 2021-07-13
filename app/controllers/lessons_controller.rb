@@ -73,10 +73,12 @@ class LessonsController < ApplicationController
 
       Phrase.create(en: en, ru: ru, lesson_id: @lesson.id)
     elsif @lesson.position == 2
-      subject_pronoun = Pronoun.where(kind: 'subject').sample
-      object_pronoun = Pronoun.where(kind: 'object').sample
+      verb_pronoun_form = VerbPronounForm.all.sample
+      subject_pronoun = Pronoun.where.not(id: verb_pronoun_form.pronoun_id)
+                               .where(kind: 'subject').sample
+      object_pronoun = verb_pronoun_form.pronoun_form
       question_word = Pronoun.where(kind: 'question_word').sample
-      verb = Verb.all.sample
+      verb = verb_pronoun_form.verb
       time = [:present, :past, :future].sample
 
       case time
