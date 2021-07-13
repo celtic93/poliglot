@@ -1,0 +1,14 @@
+= form_with model: @pronoun_form do |f|
+  -if @pronoun_form.errors.any?
+    = render 'shared/errors', errors: @pronoun_form.errors
+
+  = f.label :en
+  = f.text_field :en
+
+  = f.label :ru
+  = f.text_field :ru
+
+  = f.label :pronoun
+  = f.collection_select :pronoun_id, Pronoun.where(kind: 'subject'), :id, :ru
+
+  = f.submit

@@ -1,0 +1,6 @@
+p= link_to 'New', new_pronoun_form_path
+
+- @pronoun_forms.each do |pronoun_form|
+  p= "#{pronoun_form.en} #{pronoun_form.ru}"
+  = link_to 'Edit', edit_pronoun_form_path(pronoun_form)
+  = link_to 'Delete', pronoun_form_path(pronoun_form), method: :delete
