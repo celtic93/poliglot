@@ -1,5 +1,6 @@
 class Pronoun < ApplicationRecord
   has_many :pronoun_forms
+  has_many :verb_pronoun_forms, dependent: :destroy
   
   validates :en, :ru, presence: true
   validates :en, uniqueness: true

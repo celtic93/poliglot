@@ -74,7 +74,8 @@ class LessonsController < ApplicationController
       Phrase.create(en: en, ru: ru, lesson_id: @lesson.id)
     elsif @lesson.position == 2
       verb_pronoun_form = VerbPronounForm.all.sample
-      subject_pronoun = Pronoun.where.not(id: verb_pronoun_form.pronoun_id)
+      subject_pronoun_ids = [3, 5].include?(verb_pronoun_form.pronoun_id) ? [3, 5] : verb_pronoun_form.pronoun_id
+      subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
                                .where(kind: 'subject').sample
       object_pronoun = verb_pronoun_form.pronoun_form
       question_word = Pronoun.where(kind: 'question_word').sample

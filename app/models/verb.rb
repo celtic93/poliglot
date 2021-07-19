@@ -1,4 +1,6 @@
 class Verb < ApplicationRecord
+  has_many :verb_pronoun_forms, dependent: :destroy
+  
   validates :en, :en_with_s, :en_form_2, :ru, :ru_present_i, :ru_present_you, :ru_present_he,
             :ru_present_she, :ru_present_we, :ru_present_they, :ru_past_i, :ru_past_you,
             :ru_past_he, :ru_past_she, :ru_past_we, :ru_past_they, :ru_future_i, :ru_future_you,
