@@ -1,0 +1,15 @@
+= form_with model: @verb do |f|
+  -if @verb.errors.any?
+    = render 'shared/errors', errors: @verb.errors
+
+  p= f.label :en
+  p= f.text_field :en
+
+  p= f.label :ru
+  p= f.text_field :ru
+
+  - QuestionWord.all.each do |word|
+    = check_box_tag :question_word_ids, word.id, @verb.question_words.include?(word), name: 'verb[question_word_ids][]'
+    = label_tag :question_word_ids, word.ru
+
+  p= f.submit

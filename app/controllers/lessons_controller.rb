@@ -78,8 +78,8 @@ class LessonsController < ApplicationController
       subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
                                .where(kind: 'subject').sample
       object_pronoun = verb_pronoun_form.pronoun_form
-      question_word = Pronoun.where(kind: 'question_word').sample
       verb = verb_pronoun_form.verb
+      question_word = verb.question_words.sample
       time = [:present, :past, :future].sample
 
       case time
