@@ -79,23 +79,59 @@ class LessonsController < ApplicationController
                                .where(kind: 'subject').sample
       object_pronoun = verb_pronoun_form.pronoun_form
       verb = verb_pronoun_form.verb
-      question_word = verb.question_words.sample
+      type = [:question, :statement, :negation].sample
       time = [:present, :past, :future].sample
 
-      case time
-      when :present
-        auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'does' : 'do'
-        verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
-        en = "#{question_word.en} #{auxiliary_word} #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
-        ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
-      when :past
-        verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
-        en = "#{question_word.en} did #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
-        ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
-      when :future
-        verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
-        en = "#{question_word.en} will #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
-        ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
+      case type
+      when :question
+        question_word = verb.question_words.sample
+        case time
+        when :present
+          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'does' : 'do'
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{question_word.en} #{auxiliary_word} #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
+          ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
+        when :past
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{question_word.en} did #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
+          ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
+        when :future
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{question_word.en} will #{subject_pronoun.en} #{verb.en} #{object_pronoun.en}?"
+          ru = "#{question_word.ru} #{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}?"
+        end
+      when :statement
+        case time
+        when :present
+          verb_en = ['he', 'she'].include?(subject_pronoun.en) ? verb.en_with_s : verb.en 
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} #{verb_en} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}"
+        when :past
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} #{verb.en_form_2} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}"
+        when :future
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} will #{verb.en} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} #{verb[verb_form]} #{object_pronoun.ru}"
+        end
+      when :negation
+        case time
+        when :present
+          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "doesn't" : "don't"
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} не #{verb[verb_form]} #{object_pronoun.ru}"
+        when :past
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} didn't #{verb.en} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} не #{verb[verb_form]} #{object_pronoun.ru}"
+        when :future
+          verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+          en = "#{subject_pronoun.en} won't #{verb.en} #{object_pronoun.en}"
+          ru = "#{subject_pronoun.ru} не #{verb[verb_form]} #{object_pronoun.ru}"
+        end
       end
 
       Phrase.create(en: en, ru: ru, lesson_id: @lesson.id)
