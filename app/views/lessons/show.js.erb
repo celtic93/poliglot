@@ -1,9 +1,9 @@
 $('.phrase').empty();
 $('.phrase').append('<%= j render 'phrases/phrase', phrase: @phrase %>');
-$('.message').empty();
-$('.message').append('<p>Excellent!</p>');
+$('body').toggleClass('success');
+setTimeout(() => $('body').toggleClass('success'), 70);
 $.confetti.restart();
 setTimeout($.confetti.stop, 1000);
 $("#phrase_en_input").focus();
-$('#myBar').text('<%= 150 - @count %>')
-$('#myBar').width((150 - parseInt($('#myBar').text(), 10)) / 1.5 + '%');
+$('#myBar').text('<%= 100 - @count %>')
+$('#myBar').width((100 - parseInt($('#myBar').text(), 10)) / 1 + '%');

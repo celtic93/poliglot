@@ -12,4 +12,58 @@
     = check_box_tag :question_word_ids, word.id, @verb.question_words.include?(word), name: 'verb[question_word_ids][]'
     = label_tag :question_word_ids, word.ru
 
+  p= f.label :ru_present_i
+  p= f.text_field :ru_present_i
+
+  p= f.label :ru_present_you
+  p= f.text_field :ru_present_you
+
+  p= f.label :ru_present_he
+  p= f.text_field :ru_present_he
+            
+  p= f.label :ru_present_she
+  p= f.text_field :ru_present_she
+            
+  p= f.label :ru_present_we
+  p= f.text_field :ru_present_we
+            
+  p= f.label :ru_present_they
+  p= f.text_field :ru_present_they
+            
+  p= f.label :ru_past_i
+  p= f.text_field :ru_past_i
+            
+  p= f.label :ru_past_you
+  p= f.text_field :ru_past_you
+            
+  p= f.label :ru_past_he
+  p= f.text_field :ru_past_he
+            
+  p= f.label :ru_past_she
+  p= f.text_field :ru_past_she
+            
+  p= f.label :ru_past_we
+  p= f.text_field :ru_past_we
+            
+  p= f.label :ru_past_they
+  p= f.text_field :ru_past_they
+            
+  p= f.label :ru_future_i
+  p= f.text_field :ru_future_i
+            
+  p= f.label :ru_future_you
+  p= f.text_field :ru_future_you
+            
+  p= f.label :ru_future_he
+  p= f.text_field :ru_future_he
+            
+  p= f.label :ru_future_she
+  p= f.text_field :ru_future_she
+            
+  p= f.label :ru_future_we
+  p= f.text_field :ru_future_we
+            
+  p= f.label :ru_future_they
+  p= f.text_field :ru_future_they
+
   p= f.submit
