@@ -10,13 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_20_162350) do
+ActiveRecord::Schema.define(version: 2021_07_25_105334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "lessons", force: :cascade do |t|
     t.integer "position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.string "ru_2"
+    t.string "en_plural"
+    t.string "ru_plural"
+    t.string "ru_plural_2"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -29,6 +40,13 @@ ActiveRecord::Schema.define(version: 2021_07_20_162350) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["lesson_id"], name: "index_phrases_on_lesson_id"
+  end
+
+  create_table "places", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "pronoun_forms", force: :cascade do |t|
