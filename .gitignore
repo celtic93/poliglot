@@ -30,6 +30,7 @@
 /config/database.yml
 
 /db/seeds.rb
+/*.sql*
 
 /public/packs
 /public/packs-test
