@@ -10,10 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_04_190017) do
+ActiveRecord::Schema.define(version: 2021_08_09_160104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "adjective_forms", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.string "ru_2"
+    t.string "ru_plural"
+    t.string "ru_plural_2"
+    t.integer "kind"
+    t.bigint "adjective_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["adjective_id"], name: "index_adjective_forms_on_adjective_id"
+  end
+
+  create_table "adjectives", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "lessons", force: :cascade do |t|
     t.integer "position"
