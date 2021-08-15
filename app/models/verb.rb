@@ -1,6 +1,9 @@
 class Verb < ApplicationRecord
   has_many :verb_pronoun_forms, dependent: :destroy
   has_and_belongs_to_many :question_words
+  before_destroy do
+    question_words.each { |question_word| question_word.destroy }
+  end
   
   validates :en, :en_with_s, :en_form_2, :ru, :ru_present_i, :ru_present_you, :ru_present_he,
             :ru_present_she, :ru_present_we, :ru_present_they, :ru_past_i, :ru_past_you,

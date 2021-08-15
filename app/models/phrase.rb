@@ -1,5 +1,6 @@
 class Phrase < ApplicationRecord
   belongs_to :lesson
+  belongs_to :user
   
   validates :en, :ru, presence: true
   validates :en_input, inclusion: { in: ->(phrase) { [phrase.en.downcase, phrase.en.capitalize, phrase.en] },
