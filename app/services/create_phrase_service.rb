@@ -8,11 +8,13 @@ class CreatePhraseService
   private
 
   def self.create_phrase
-    if @lesson.position == 1
+    position = @lesson.position == 666 ? rand(1...Lesson.count) : @lesson.position
+    time = [:present, :past, :future].sample
+    type = [:question, :statement, :negation].sample
+
+    if position == 1
       pronoun = Pronoun.where(kind: 'subject').sample
       verb = Verb.where.not(en: 'be').sample
-      time = [:present, :past, :future].sample
-      type = [:question, :statement, :negation].sample
       verb_form = "ru_#{time}_#{pronoun.en.downcase}"
 
       case type
@@ -56,15 +58,13 @@ class CreatePhraseService
           ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]}"
         end
       end
-    elsif @lesson.position == 2
+    elsif position == 2
       verb_pronoun_form = VerbPronounForm.all.sample
       subject_pronoun_ids = [3, 5].include?(verb_pronoun_form.pronoun_id) ? [3, 5] : verb_pronoun_form.pronoun_id
       subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
                                .where(kind: 'subject').sample
       object_pronoun = verb_pronoun_form.pronoun_form
       verb = verb_pronoun_form.verb
-      type = [:question, :statement, :negation].sample
-      time = [:present, :past, :future].sample
       verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
 
       case type
@@ -109,11 +109,9 @@ class CreatePhraseService
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru}"
         end
       end
-    elsif @lesson.position == 3
+    elsif position == 3
       verb = Verb.find_by(en: 'be')
       subject_pronoun = Pronoun.where(kind: 'subject').sample
-      type = [:question, :statement, :negation].sample
-      time = [:present, :past, :future].sample
       end_word = [Person, Place].sample.all.sample
       verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
 
@@ -181,11 +179,9 @@ class CreatePhraseService
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
         end
       end
-    elsif @lesson.position == 4
+    elsif position == 4
       verb = Verb.find_by(en: 'work')
       subject_pronoun = Pronoun.where(en: ['I', 'he', 'she'], kind: 'subject').sample
-      type = [:question, :statement, :negation].sample
-      time = [:present, :past, :future].sample
       verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
       profession = Person.where(profession: true).sample
       article = profession.en.start_with?('a', 'e', 'i', 'o', 'u') ? 'an' : 'a'
@@ -231,74 +227,130 @@ class CreatePhraseService
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{profession.ru_2}"
         end
       end
-    elsif @lesson.position == 5
-      verb = Verb.find_by(en: 'be')
-      subject_pronoun = Pronoun.where(kind: 'subject').sample
-      type = [:question, :statement, :negation].sample
-      time = [:present, :past, :future].sample
-      adjective = AdjectiveForm.all.sample
-      verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+    elsif position == 5
+      phrase_type = [:with_adjective, :with_timeframe].sample
 
-      if adjective.en.start_with?('the ')
-        person = Person.where(profession: true).sample
-        is_plural = ['we', 'you', 'they'].include?(subject_pronoun.en)
-        ru_form = is_plural ? 'ru_plural' : 'ru'
-        en_form = is_plural ? 'en_plural' : 'en'
-        ru_form += '_2' unless time == :present
-        en_end_of_sentance = "#{adjective.en} #{person[en_form]}"
-        ru_end_of_sentance = "#{adjective[ru_form]} #{person[ru_form]}"
-      else
-        ru_form = is_plural ? 'ru_plural' : 'ru'
-        en_form = is_plural ? 'en_plural' : 'en'
-        ru_form += '_2' unless time == :present
-        object_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
-                               .where(kind: 'object').sample
-        en_end_of_sentance = "#{adjective.en} than #{object_pronoun.en}"
-        ru_end_of_sentance = "#{adjective[ru_form]} #{object_pronoun.ru}"
-      end
+      if phrase_type == :with_adjective
+        type = [:question, :statement].sample
+        verb = Verb.find_by(en: 'be')
+        subject_pronoun = Pronoun.where(kind: 'subject').sample
+        adjective = AdjectiveForm.all.sample
+        verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
 
-      case type
-      when :question
-        case time
-        when :present
-          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
-          en = "#{auxiliary_word} #{subject_pronoun.en} #{en_end_of_sentance}?"
-          ru = "#{subject_pronoun.ru.capitalize} #{ru_end_of_sentance}?"
-        when :past
-          auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
-          en = "#{auxiliary_word} #{subject_pronoun.en} #{en_end_of_sentance}?"
-          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}?"
-        when :future
-          en = "will #{subject_pronoun.en} #{verb.en} #{en_end_of_sentance}?"
-          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}?"
+        if adjective.en.start_with?('the ')
+          person = Person.where(profession: true).sample
+          is_plural = ['we', 'you', 'they'].include?(subject_pronoun.en)
+          ru_form = is_plural ? 'ru_plural' : 'ru'
+          en_form = is_plural ? 'en_plural' : 'en'
+          ru_form += '_2' unless time == :present
+          en_end_of_sentance = "#{adjective.en} #{person[en_form]}"
+          ru_end_of_sentance = "#{adjective[ru_form]} #{person[ru_form]}"
+        else
+          ru_form = is_plural ? 'ru_plural' : 'ru'
+          en_form = is_plural ? 'en_plural' : 'en'
+          ru_form += '_2' unless time == :present
+          subject_pronoun_ids = [17, 20] if [3, 5].include?(subject_pronoun.id)
+          object_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
+                                 .where(kind: 'object').sample
+          en_end_of_sentance = "#{adjective.en} than #{object_pronoun.en}"
+          ru_end_of_sentance = "#{adjective[ru_form]} #{object_pronoun.ru}"
         end
-      when :statement
-        case time
-        when :present
-          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
-          en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} #{ru_end_of_sentance}"
-        when :past
-          auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
-          en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}"
-        when :future
-          en = "#{subject_pronoun.en} will #{verb.en} #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}"
+
+        case type
+        when :question
+          case time
+          when :present
+            auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
+            en = "#{auxiliary_word} #{subject_pronoun.en} #{en_end_of_sentance}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{ru_end_of_sentance}?"
+          when :past
+            auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
+            en = "#{auxiliary_word} #{subject_pronoun.en} #{en_end_of_sentance}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}?"
+          when :future
+            en = "will #{subject_pronoun.en} #{verb.en} #{en_end_of_sentance}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}?"
+          end
+        when :statement
+          case time
+          when :present
+            auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
+            en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
+            ru = "#{subject_pronoun.ru.capitalize} #{ru_end_of_sentance}"
+          when :past
+            auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
+            en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}"
+          when :future
+            en = "#{subject_pronoun.en} will #{verb.en} #{en_end_of_sentance}"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{ru_end_of_sentance}"
+          end
+        # when :negation
+        #   case time
+        #   when :present
+        #     auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
+        #     en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
+        #     ru = "#{subject_pronoun.ru.capitalize} не #{ru_end_of_sentance}"
+        #   when :past
+        #     auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
+        #     en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
+        #     ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
+        #   when :future
+        #     en = "#{subject_pronoun.en} will not #{verb.en} #{en_end_of_sentance}"
+        #     ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
+        #   end
         end
-      when :negation
-        case time
-        when :present
-          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
-          en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} не #{ru_end_of_sentance}"
-        when :past
-          auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
-          en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
-        when :future
-          en = "#{subject_pronoun.en} will not #{verb.en} #{en_end_of_sentance}"
-          ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
+      elsif phrase_type == :with_timeframe
+        verb_pronoun_form = VerbPronounForm.all.sample
+        subject_pronoun_ids = [3, 5].include?(verb_pronoun_form.pronoun_id) ? [3, 5] : verb_pronoun_form.pronoun_id
+        subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
+                                 .where(kind: 'subject').sample
+        object_pronoun = verb_pronoun_form.pronoun_form
+        verb = verb_pronoun_form.verb
+        verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+        timeframe_kind = time == :present ? :present : [:always, time]
+        timeframe = Timeframe.where(kind: timeframe_kind).sample
+
+        case type
+        when :question
+          case time
+          when :present
+            auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'does' : 'do'
+            en = "#{auxiliary_word} #{subject_pronoun.en} #{verb.en} #{object_pronoun.en} #{timeframe.en}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}?"
+          when :past
+            en = "Did #{subject_pronoun.en} #{verb.en} #{object_pronoun.en} #{timeframe.en}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}?"
+          when :future
+            en = "Will #{subject_pronoun.en} #{verb.en} #{object_pronoun.en} #{timeframe.en}?"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}?"
+          end
+        when :statement
+          case time
+          when :present
+            verb_en = ['he', 'she'].include?(subject_pronoun.en) ? verb.en_with_s : verb.en
+            en = "#{subject_pronoun.en} #{verb_en} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          when :past
+            en = "#{subject_pronoun.en} #{verb.en_form_2} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          when :future
+            en = "#{subject_pronoun.en} will #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          end
+        when :negation
+          case time
+          when :present
+            negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+            en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          when :past
+            en = "#{subject_pronoun.en} did not #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          when :future
+            en = "#{subject_pronoun.en} will not #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
+          end
         end
       end
     end
