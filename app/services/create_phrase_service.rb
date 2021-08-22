@@ -354,6 +354,54 @@ class CreatePhraseService
           end
         end
       end
+    elsif position == 6
+      verb = Verb.find_by(en: 'give')
+      subject_pronoun = Pronoun.where(kind: 'subject').sample
+      verb_form = "ru_#{time}_#{subject_pronoun.en.downcase}"
+      noun = Noun.all.sample
+      quantifier = Quantifier.where(kind: noun.kind).sample
+
+      case type
+      when :question
+        case time
+        when :present
+          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'Does' : 'Do'
+          en = "#{auxiliary_word} #{subject_pronoun.en} #{verb.en} #{quantifier.en} #{noun.en}?"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}?"
+        when :past
+          en = "Did #{subject_pronoun.en} #{verb.en} #{quantifier.en} #{noun.en}?"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}?"
+        when :future
+          en = "will #{subject_pronoun.en} #{verb.en} #{quantifier.en} #{noun.en}?"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}?"
+        end
+      when :statement
+        case time
+        when :present
+          verb_en = ['he', 'she'].include?(subject_pronoun.en) ? verb.en_with_s : verb.en 
+          en = "#{subject_pronoun.en} #{verb_en} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        when :past
+          en = "#{subject_pronoun.en} #{verb.en_form_2} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        when :future
+          en = "#{subject_pronoun.en} will #{verb.en} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        end
+      when :negation
+        case time
+        when :present
+          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+          en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        when :past
+          en = "#{subject_pronoun.en} did not #{verb.en} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        when :future
+          en = "#{subject_pronoun.en} will not #{verb.en} #{quantifier.en} #{noun.en}"
+          ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
+        end
+      end
     end
 
     @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)

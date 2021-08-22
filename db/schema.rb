@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_16_152703) do
+ActiveRecord::Schema.define(version: 2021_08_22_124215) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,14 @@ ActiveRecord::Schema.define(version: 2021_08_16_152703) do
 
   create_table "lessons", force: :cascade do |t|
     t.integer "position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "nouns", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.integer "kind"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -87,6 +95,14 @@ ActiveRecord::Schema.define(version: 2021_08_16_152703) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "kind"
+  end
+
+  create_table "quantifiers", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.integer "kind"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "question_words", force: :cascade do |t|
