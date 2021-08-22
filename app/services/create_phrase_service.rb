@@ -8,7 +8,7 @@ class CreatePhraseService
   private
 
   def self.create_phrase
-    position = @lesson.position == 666 ? rand(1...Lesson.count) : @lesson.position
+    position = @lesson.position == 777 ? rand(1...Lesson.count) : @lesson.position
     time = [:present, :past, :future].sample
     type = [:question, :statement, :negation].sample
 
@@ -301,6 +301,7 @@ class CreatePhraseService
         #   end
         end
       elsif phrase_type == :with_timeframe
+        time = [:past, :future]
         verb_pronoun_form = VerbPronounForm.all.sample
         subject_pronoun_ids = [3, 5].include?(verb_pronoun_form.pronoun_id) ? [3, 5] : verb_pronoun_form.pronoun_id
         subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
