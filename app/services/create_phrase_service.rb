@@ -47,14 +47,14 @@ class CreatePhraseService
       when :negation
         case time
         when :present
-          negation_word = ['he', 'she'].include?(pronoun.en) ? "does not" : "do not"
+          negation_word = ['he', 'she'].include?(pronoun.en) ? "doesn't" : "don't"
           en = "#{pronoun.en} #{negation_word} #{verb.en}"
           ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]}"
         when :past
-          en = "#{pronoun.en} did not #{verb.en}"
+          en = "#{pronoun.en} didn't #{verb.en}"
           ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]}"
         when :future
-          en = "#{pronoun.en} will not #{verb.en}"
+          en = "#{pronoun.en} won't #{verb.en}"
           ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]}"
         end
       end
@@ -98,14 +98,14 @@ class CreatePhraseService
       when :negation
         case time
         when :present
-          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "doesn't" : "don't"
           en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{object_pronoun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru}"
         when :past
-          en = "#{subject_pronoun.en} did not #{verb.en} #{object_pronoun.en}"
+          en = "#{subject_pronoun.en} didn't #{verb.en} #{object_pronoun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru}"
         when :future
-          en = "#{subject_pronoun.en} will not #{verb.en} #{object_pronoun.en}"
+          en = "#{subject_pronoun.en} won't #{verb.en} #{object_pronoun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru}"
         end
       end
@@ -167,15 +167,15 @@ class CreatePhraseService
       when :negation
         case time
         when :present
-          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? 'is' : 'I' == subject_pronoun.en ? 'am' : 'are'
-          en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
+          auxiliary_word = ['he', 'she'].include?(subject_pronoun.en) ? "isn't" : 'I' == subject_pronoun.en ? 'am not' : "aren't"
+          en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
           ru = "#{subject_pronoun.ru.capitalize} не #{ru_end_of_sentance}"
         when :past
-          auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? 'was' : 'were'
-          en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
+          auxiliary_word = ['I', 'he', 'she'].include?(subject_pronoun.en) ? "wasn't" : "weren't"
+          en = "#{subject_pronoun.en} #{auxiliary_word} #{en_end_of_sentance}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
         when :future
-          en = "#{subject_pronoun.en} will not #{verb.en} #{en_end_of_sentance}"
+          en = "#{subject_pronoun.en} won't #{verb.en} #{en_end_of_sentance}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
         end
       end
@@ -216,14 +216,14 @@ class CreatePhraseService
       when :negation
         case time
         when :present
-          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "doesn't" : "don't"
           en = "#{subject_pronoun.en} #{negation_word} #{verb.en} as #{article} #{profession.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{profession.ru_2}"
         when :past
-          en = "#{subject_pronoun.en} did not #{verb.en} as #{article} #{profession.en}"
+          en = "#{subject_pronoun.en} didn't #{verb.en} as #{article} #{profession.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{profession.ru_2}"
         when :future
-          en = "#{subject_pronoun.en} will not #{verb.en} as #{article} #{profession.en}"
+          en = "#{subject_pronoun.en} won't #{verb.en} as #{article} #{profession.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{profession.ru_2}"
         end
       end
@@ -296,12 +296,12 @@ class CreatePhraseService
         #     en = "#{subject_pronoun.en} #{auxiliary_word} not #{en_end_of_sentance}"
         #     ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
         #   when :future
-        #     en = "#{subject_pronoun.en} will not #{verb.en} #{en_end_of_sentance}"
+        #     en = "#{subject_pronoun.en} won't #{verb.en} #{en_end_of_sentance}"
         #     ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{ru_end_of_sentance}"
         #   end
         end
       elsif phrase_type == :with_timeframe
-        time = [:past, :future]
+        time = [:past, :future].sample
         verb_pronoun_form = VerbPronounForm.all.sample
         subject_pronoun_ids = [3, 5].include?(verb_pronoun_form.pronoun_id) ? [3, 5] : verb_pronoun_form.pronoun_id
         subject_pronoun = Pronoun.where.not(id: subject_pronoun_ids)
@@ -342,14 +342,14 @@ class CreatePhraseService
         when :negation
           case time
           when :present
-            negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+            negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "doesn't" : "don't"
             en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{object_pronoun.en} #{timeframe.en}"
             ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
           when :past
-            en = "#{subject_pronoun.en} did not #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            en = "#{subject_pronoun.en} didn't #{verb.en} #{object_pronoun.en} #{timeframe.en}"
             ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
           when :future
-            en = "#{subject_pronoun.en} will not #{verb.en} #{object_pronoun.en} #{timeframe.en}"
+            en = "#{subject_pronoun.en} won't #{verb.en} #{object_pronoun.en} #{timeframe.en}"
             ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{object_pronoun.ru} #{timeframe.ru}"
           end
         end
@@ -391,17 +391,21 @@ class CreatePhraseService
       when :negation
         case time
         when :present
-          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "does not" : "do not"
+          negation_word = ['he', 'she'].include?(subject_pronoun.en) ? "doesn't" : "don't"
           en = "#{subject_pronoun.en} #{negation_word} #{verb.en} #{quantifier.en} #{noun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
         when :past
-          en = "#{subject_pronoun.en} did not #{verb.en} #{quantifier.en} #{noun.en}"
+          en = "#{subject_pronoun.en} didn't #{verb.en} #{quantifier.en} #{noun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
         when :future
-          en = "#{subject_pronoun.en} will not #{verb.en} #{quantifier.en} #{noun.en}"
+          en = "#{subject_pronoun.en} won't #{verb.en} #{quantifier.en} #{noun.en}"
           ru = "#{subject_pronoun.ru.capitalize} не #{verb[verb_form]} #{quantifier.ru} #{noun.ru}"
         end
       end
+    elsif position == 8
+      phrasal_verb = PhrasalVerb.all.sample
+      en = phrasal_verb.en
+      ru = phrasal_verb.ru
     end
 
     @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)

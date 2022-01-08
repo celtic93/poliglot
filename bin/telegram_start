@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "[ bin/telegram_start ] Starting bot poller"
+bundle exec rake telegram:bot:poller 

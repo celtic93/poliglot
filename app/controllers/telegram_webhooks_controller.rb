@@ -1,7 +1,7 @@
 class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
 
-  before_action :delete_message, except: %w(practice! message action_missing)
+  before_action :delete_message, except: %w(practice! hint! message action_missing)
   before_action :current_tg_user
 
   def start!(*)
@@ -20,6 +20,11 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
   def practice!(*)
     new_practice
+  end
+
+  def hint!(*)
+    current_tg_user.phrases.last.update(hinted: true)
+    respond_with :message, text: current_tg_user.phrases.last.en
   end
 
   def count!(*)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_22_124215) do
+ActiveRecord::Schema.define(version: 2022_01_08_180519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,13 @@ ActiveRecord::Schema.define(version: 2021_08_22_124215) do
     t.boolean "profession", default: false
   end
 
+  create_table "phrasal_verbs", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "phrases", force: :cascade do |t|
     t.string "en"
     t.string "ru"
@@ -69,6 +76,7 @@ ActiveRecord::Schema.define(version: 2021_08_22_124215) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "user_id"
+    t.boolean "hinted", default: false
     t.index ["lesson_id"], name: "index_phrases_on_lesson_id"
     t.index ["user_id"], name: "index_phrases_on_user_id"
   end

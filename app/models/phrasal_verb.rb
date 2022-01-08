@@ -1,0 +1,2 @@
+class PhrasalVerb < ApplicationRecord
+end
