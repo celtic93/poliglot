@@ -403,9 +403,22 @@ class CreatePhraseService
         end
       end
     elsif position == 8
-      phrasal_verb = PhrasalVerb.all.sample
+      used_phrasal_verbs_ids = PhrasalVerbPhrase.joins(:phrase)
+                                                .where(phrase: { hinted: false, user_id: @user.id })
+                                                .where.not(phrase: { en_input: nil })
+                                                .pluck(:phrasal_verb_id)
+      phrasal_verb = PhrasalVerb.where.not(id: used_phrasal_verbs_ids).sample
+
+      unless phrasal_verb
+        phrasal_verb = PhrasalVerb.all.sample
+        PhrasalVerbPhrase.joins(:phrase).where(phrase: { user_id: @user.id })
+      end
+
       en = phrasal_verb.en
       ru = phrasal_verb.ru
+      phrase = @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)
+      PhrasalVerbPhrase.create(phrase: phrase, phrasal_verb: phrasal_verb)
+      return phrase
     end
 
     @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)

@@ -74,8 +74,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     keyboard
   end
 
-  def lesson_text(lesson)
-    respond_with :message, text: "Выбран урок #{lesson.position}\n"\
+  def lesson_text
+    respond_with :message, text: "Выбран урок #{current_tg_user.lesson.position}\n"\
                                  "/practice - Практическое занятие\n"\
                                  "/choose - Поменять в урок"
   end
