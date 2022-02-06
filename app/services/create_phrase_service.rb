@@ -8,7 +8,7 @@ class CreatePhraseService
   private
 
   def self.create_phrase
-    position = @lesson.position == 777 ? rand(1...Lesson.count) : @lesson.position
+    position = @lesson.position == 777 ? rand(1..Lesson.count) : @lesson.position
     time = [:present, :past, :future].sample
     type = [:question, :statement, :negation].sample
 
@@ -411,7 +411,7 @@ class CreatePhraseService
 
       unless phrasal_verb
         phrasal_verb = PhrasalVerb.all.sample
-        PhrasalVerbPhrase.joins(:phrase).where(phrase: { user_id: @user.id })
+        PhrasalVerbPhrase.joins(:phrase).where(phrase: { user_id: @user.id }).destroy_all
       end
 
       en = phrasal_verb.en
@@ -419,6 +419,73 @@ class CreatePhraseService
       phrase = @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)
       PhrasalVerbPhrase.create(phrase: phrase, phrasal_verb: phrasal_verb)
       return phrase
+    elsif position == 9
+      reflexive_pronouns_en = {
+        'I': 'myself',
+        'he': 'himself',
+        'she': 'herself',
+        'we': 'ourselves',
+        'you': 'yourselves',
+        'they': 'themselves'
+      }
+
+      reflexive_pronouns_ru = {
+        'я': 'сам',
+        'он': 'сам',
+        'она': 'сама',
+        'мы': 'сами',
+        'вы': 'сами',
+        'они': 'сами'
+      }
+
+      pronoun = Pronoun.where(kind: 'subject').sample
+      verb = Verb.where(en: 'do').take
+      verb_form = "ru_#{time}_#{pronoun.en.downcase}"
+
+      reflexive_pronoun_en = reflexive_pronouns_en[pronoun.en.to_sym]
+      reflexive_pronoun_ru = reflexive_pronouns_ru[pronoun.ru.to_sym]
+
+      case type
+      when :question
+        case time
+        when :present
+          auxiliary_word = ['he', 'she'].include?(pronoun.en) ? 'Does' : 'Do'
+          en = "#{auxiliary_word} #{pronoun.en} #{verb.en} it #{reflexive_pronoun_en}?"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}?"
+        when :past
+          en = "Did #{pronoun.en} #{verb.en} it #{reflexive_pronoun_en}?"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}?"
+        when :future
+          en = "Will #{pronoun.en} #{verb.en} it #{reflexive_pronoun_en}?"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}?"
+        end
+      when :statement
+        case time
+        when :present
+          verb_en = ['he', 'she'].include?(pronoun.en) ? verb.en_with_s : verb.en
+          en = "#{pronoun.en} #{verb_en} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        when :past
+          en = "#{pronoun.en} #{verb.en_form_2} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        when :future
+          en = "#{pronoun.en} will #{verb.en} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        end
+      when :negation
+        case time
+        when :present
+          negation_word = ['he', 'she'].include?(pronoun.en) ? "doesn't" : "don't"
+          en = "#{pronoun.en} #{negation_word} #{verb.en} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        when :past
+          en = "#{pronoun.en} didn't #{verb.en} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        when :future
+          en = "#{pronoun.en} won't #{verb.en} it #{reflexive_pronoun_en}"
+          ru = "#{pronoun.ru.capitalize} не #{verb[verb_form]} это #{reflexive_pronoun_ru}"
+        end
+      end
     end
 
     @user.phrases.create(en: en, ru: ru, lesson_id: @lesson.id)

@@ -1,11 +1,11 @@
 class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
 
-  before_action :delete_message, except: %w(practice! hint! message action_missing)
+  before_action :delete_message, except: %w[practice! hint! message action_missing]
   before_action :current_tg_user
 
   def start!(*)
-    respond_with :message, text: "Чтобы начать, введите команду /choose и выберите урок"
+    respond_with :message, text: 'Чтобы начать, введите команду /choose и выберите урок'
   end
 
   def choose!(*)
@@ -31,6 +31,15 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: current_tg_user.phrases_count
   end
 
+  def stat!(*)
+    respond_with :message, text: PhrasalVerb.where.not(id: PhrasalVerbPhrase
+                                                              .joins(:phrase)
+                                                              .where(phrase: { hinted: false,
+                                                                               user_id: current_tg_user.id })
+                                                              .where.not(phrase: { en_input: nil })
+                                                              .pluck(:phrasal_verb_id)).count
+  end
+
   def callback_query(data)
     callback = data.split(' ')
     if callback[0] == 'chosed_lesson'
@@ -46,18 +55,21 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    phrase = current_tg_user.phrases.last
+    @phrase = current_tg_user.phrases.last
 
-    if phrase&.update(en_input: message['text'])
+    if @phrase&.update(en_input: message['text'])
       respond_with :message, text: 'ПРАВИЛЬНО'
       new_practice
+    elsif current_tg_user.lesson.position == 8
+      # Lesson 8 is lesson with Prasal Verbs
+      phrasal_verb_check(message)
     else
       respond_with :message, text: 'Ты можешь лучше'
-      respond_with :message, text: phrase.ru
+      respond_with :message, text: @phrase.ru
     end
   end
 
-  def action_missing(action, *_args)
+  def action_missing(_action, *_args)
     respond_with :message, text: 'Неизвестная команда' if action_type == :command
   end
 
@@ -77,7 +89,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def lesson_text
     respond_with :message, text: "Выбран урок #{current_tg_user.lesson.position}\n"\
                                  "/practice - Практическое занятие\n"\
-                                 "/choose - Поменять в урок"
+                                 '/choose - Поменять в урок'
   end
 
   def delete_message
@@ -86,15 +98,38 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def current_tg_user
-    @user ||= User.find_or_create_by(telegram_id: payload_params['chat']['id'])
+    @current_tg_user ||= User.find_or_create_by(telegram_id: payload_params['chat']['id'])
   end
 
   def payload_params
-    payload['message'] ? payload['message'] : payload
+    payload['message'] || payload
   end
 
   def new_practice
     phrase = CreatePhraseService.call(current_tg_user, current_tg_user.lesson)
     respond_with :message, text: phrase.ru
+  end
+
+  def phrasal_verb_check(message)
+    input = message['text'].downcase
+    input_traslations = PhrasalVerb.where(en: input).pluck(:ru)
+    possible_answers = PhrasalVerb.where(ru: @phrase.ru).pluck(:en)
+
+    if input.in?(possible_answers)
+      respond_with :message, text: 'ПРАВИЛЬНО, но нужен другой вариант'
+      respond_with :message, text: @phrase.ru
+      return
+    end
+
+    response_text = if input_traslations.any?
+                      input_traslations.map
+                                       .with_index { |tr, i| "#{i + 1}. #{tr.capitalize}" }
+                                       .join("\n")
+                    else
+                      'Переводов не найдено'
+                    end
+    respond_with :message, text: response_text
+    respond_with :message, text: @phrase.en
+    new_practice
   end
 end
