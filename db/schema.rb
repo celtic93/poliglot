@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_10_075627) do
+ActiveRecord::Schema.define(version: 2022_02_06_103521) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 2022_01_10_075627) do
     t.bigint "lesson_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "word_level", default: 1
     t.index ["lesson_id"], name: "index_users_on_lesson_id"
   end
 
@@ -184,6 +185,24 @@ ActiveRecord::Schema.define(version: 2022_01_10_075627) do
     t.string "ru_future_she"
     t.string "ru_future_we"
     t.string "ru_future_they"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "word_phrases", force: :cascade do |t|
+    t.bigint "word_id"
+    t.bigint "phrase_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["phrase_id"], name: "index_word_phrases_on_phrase_id"
+    t.index ["word_id"], name: "index_word_phrases_on_word_id"
+  end
+
+  create_table "words", force: :cascade do |t|
+    t.string "en"
+    t.string "ru"
+    t.integer "position"
+    t.integer "level"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

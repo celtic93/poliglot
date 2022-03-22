@@ -32,12 +32,23 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def stat!(*)
-    respond_with :message, text: PhrasalVerb.where.not(id: PhrasalVerbPhrase
-                                                              .joins(:phrase)
-                                                              .where(phrase: { hinted: false,
-                                                                               user_id: current_tg_user.id })
-                                                              .where.not(phrase: { en_input: nil })
-                                                              .pluck(:phrasal_verb_id)).count
+    message = if current_tg_user.lesson.position == 8
+                PhrasalVerb.where.not(id: PhrasalVerbPhrase.joins(:phrase)
+                                                           .where(phrase: { hinted: false,
+                                                                            user_id: current_tg_user.id })
+                                                           .where.not(phrase: { en_input: nil })
+                                                           .pluck(:phrasal_verb_id)).count
+              elsif current_tg_user.lesson.position == 100
+                Word.where.not(id: WordPhrase.joins(:phrase)
+                                             .where(phrase: { hinted: false, user_id: current_tg_user.id })
+                                             .where.not(phrase: { en_input: nil })
+                                             .pluck(:word_id))
+                    .where(level: current_tg_user.word_level).count
+              else
+                'не знаю'
+              end
+
+    respond_with :message, text: message
   end
 
   def callback_query(data)
@@ -60,8 +71,9 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     if @phrase&.update(en_input: message['text'])
       respond_with :message, text: 'ПРАВИЛЬНО'
       new_practice
-    elsif current_tg_user.lesson.position == 8
+    elsif current_tg_user.lesson.position.in?([8, 100])
       # Lesson 8 is lesson with Prasal Verbs
+      # Lesson 100 is lesson with 10000 Words
       phrasal_verb_check(message)
     else
       respond_with :message, text: 'Ты можешь лучше'
@@ -106,14 +118,19 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def new_practice
-    phrase = CreatePhraseService.call(current_tg_user, current_tg_user.lesson)
+    phrase = if current_tg_user.lesson.position == 100
+               CreateWordPhraseService.call(current_tg_user, current_tg_user.lesson)
+             else
+               CreatePhraseService.call(current_tg_user, current_tg_user.lesson)
+             end
     respond_with :message, text: phrase.ru
   end
 
   def phrasal_verb_check(message)
+    klass = current_tg_user.lesson.position == 8 ? PhrasalVerb : Word
     input = message['text'].downcase
-    input_traslations = PhrasalVerb.where(en: input).pluck(:ru)
-    possible_answers = PhrasalVerb.where(ru: @phrase.ru).pluck(:en)
+    input_traslations = klass.where(en: input).pluck(:ru)
+    possible_answers = klass.where(ru: @phrase.ru).pluck(:en)
 
     if input.in?(possible_answers)
       respond_with :message, text: 'ПРАВИЛЬНО, но нужен другой вариант'
